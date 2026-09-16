@@ -2,7 +2,7 @@
   "name": "remote-shell-here",
   "displayName": "Remote Shell Here",
   "description": "Open a terminal at the workspace root, including remote workspaces.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "Desousak",
   "license": "MIT",
   "repository": {
