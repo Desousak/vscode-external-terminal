@@ -1,7 +1,7 @@
 {
   "name": "remote-shell-here",
   "displayName": "Remote Shell Here",
-  "description": "Open a terminal in the current VS Code folder, including remote workspaces.",
+  "description": "Open a terminal at the workspace root, including remote workspaces.",
   "version": "1.0.1",
   "publisher": "Desousak",
   "license": "MIT",

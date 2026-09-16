@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as os from 'node:os';
 import * as vscode from 'vscode';
 import { promisify } from 'node:util';
@@ -173,18 +172,7 @@ async function getTarget(): Promise<{
   folderPath: string;
   remoteHost?: string;
 }> {
-  // Prefer the active editor's folder
-  const activeUri = vscode.window.activeTextEditor?.document.uri;
-  if (activeUri) {
-    if (activeUri.scheme === 'file' || getRemoteHost(activeUri)) {
-      return {
-        uri: activeUri,
-        folderPath: path.posix.dirname(activeUri.path),
-      };
-    }
-  }
-
-  // Otherwise use the first folder in the workspace
+  // Use the folder in the current workspace, if any
   const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
   const workspace = workspaceFolders[0];
   if (workspace) {

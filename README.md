@@ -1,6 +1,6 @@
 # Remote Shell Here
 
-Open a terminal in the current VS Code folder. Also supports opening and connecting to remote SSH workspaces.
+Open a terminal at the first workspace folder, or your home directory when no workspace is open. Also supports opening and connecting to remote SSH workspaces.
 
 ## Requirements
 
