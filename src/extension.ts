@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as os from 'node:os';
 import * as vscode from 'vscode';
 import { promisify } from 'node:util';
 import { execFile } from 'node:child_process';
@@ -36,8 +37,10 @@ function shellQuote(value: string): string {
  * @returns The command string to launch the SSH session
  */
 function createRemoteLaunchCmd(remoteHost: string, folderPath: string): string {
+  const remotePath =
+    folderPath === '~' ? '"${HOME}"' : shellQuote(folderPath);
   const remoteCommand =
-    `cd -- ${shellQuote(folderPath)} && ` + `exec "\${SHELL:-/bin/zsh}" -l`;
+    `cd -- ${remotePath} && ` + `exec "\${SHELL:-/bin/zsh}" -l`;
   return `exec ssh -tt -o ClearAllForwardings=yes ${shellQuote(remoteHost)} ${shellQuote(remoteCommand)}`;
 }
 
@@ -83,8 +86,8 @@ end run
 }
 
 /**
- * Get the remote host from a VS Code URI
- * @param uri URI provided from the vscode editor or workspace
+ * Get the remote host from a VS Code uri
+ * @param uri uri provided from the vscode editor or workspace
  * @returns The remote host if available, otherwise undefined
  */
 function getRemoteHost(uri: vscode.Uri): string | void {
@@ -126,40 +129,46 @@ function getRemoteHost(uri: vscode.Uri): string | void {
 }
 
 /**
- * Checks if a path is within the given workspace folder.
- * @param uri The URI of the file or folder to check.
- * @param folder The workspace folder to check against.
- * @returns True if the URI is within the workspace folder, false otherwise.
+ * Gets the active Remote-SSH target from the Remote-SSH extension
+ * @returns SSH host or alias, if one is available
  */
-function isWithinWorkspace(uri: vscode.Uri, folder: vscode.WorkspaceFolder) {
-  // If uri doesn't match folder scheme/authority, it's not within it
-  if (
-    uri.scheme !== folder.uri.scheme ||
-    uri.authority !== folder.uri.authority
-  )
-    return false;
+async function getActiveRemoteHost(): Promise<string | undefined> {
+  if (vscode.env.remoteName !== 'ssh-remote') return undefined;
 
-  // Check if the uri's path starts with the folder's path
-  return uri.path.startsWith(folder.uri.path);
+  const target = await vscode.commands.executeCommand<unknown>(
+    'remote-internal.getActiveSshRemote',
+  );
+
+  if (typeof target === 'string') return target;
+  if (typeof target !== 'object' || target === null) return undefined;
+
+  const connection = target as {
+    host?: unknown;
+    hostName?: unknown;
+    hostname?: unknown;
+  };
+  return typeof connection.host === 'string'
+    ? connection.host
+    : typeof connection.hostName === 'string'
+      ? connection.hostName
+      : typeof connection.hostname === 'string'
+        ? connection.hostname
+        : undefined;
 }
 
 /**
- * Obtains the target folder and it's path
- * @returns Folder uri and it's path, or undefined if could not be grabbed
+ * Obtains the target folder and its path
+ * @returns Folder uri and its path
  */
-function getTarget(): { uri: vscode.Uri; folderPath: string } | void {
-  // Get the path of the currently active file
+async function getTarget(): Promise<{
+  uri: vscode.Uri;
+  folderPath: string;
+  remoteHost?: string;
+}> {
+  // Prefer the active editor's folder
   const activeUri = vscode.window.activeTextEditor?.document.uri;
-  // Get all workspace folders
-  const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
-
-  // Prefer the active editor's folder, if it belongs to the open workspace.
   if (activeUri) {
-    const workspace = workspaceFolders.find((folder) =>
-      isWithinWorkspace(activeUri, folder),
-    );
-
-    if (workspace) {
+    if (activeUri.scheme === 'file' || getRemoteHost(activeUri)) {
       return {
         uri: activeUri,
         folderPath: path.posix.dirname(activeUri.path),
@@ -167,7 +176,8 @@ function getTarget(): { uri: vscode.Uri; folderPath: string } | void {
     }
   }
 
-  // Otherwise use the first folder in the workspace.
+  // Otherwise use the first folder in the workspace
+  const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
   const workspace = workspaceFolders[0];
   if (workspace) {
     return {
@@ -176,7 +186,21 @@ function getTarget(): { uri: vscode.Uri; folderPath: string } | void {
     };
   }
 
-  return undefined;
+  // Remote-ssh has no file uri in an empty window, so ask it for the host
+  const remoteHost = await getActiveRemoteHost();
+  if (remoteHost) {
+    return {
+      uri: vscode.Uri.from({ scheme: 'vscode-remote', path: '/' }),
+      folderPath: '~',
+      remoteHost,
+    };
+  }
+
+  // With no workspace or remote, just open locally
+  return {
+    uri: vscode.Uri.file(os.homedir()),
+    folderPath: os.homedir(),
+  };
 }
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -193,19 +217,10 @@ export function activate(context: vscode.ExtensionContext): void {
     'remoteShellHere.open',
     async () => {
       // Get the target folder and its path
-      const target = getTarget();
-      if (!target) {
-        vscode.window.showErrorMessage(
-          'No valid target found for opening the external terminal.',
-        );
-        void vscode.window.showErrorMessage(
-          'Remote Shell Here: Open a folder or workspace first.',
-        );
-        return;
-      }
+      const target = await getTarget();
 
       // Now resolve the remote host if any
-      const remoteHost = getRemoteHost(target.uri);
+      const remoteHost = target.remoteHost ?? getRemoteHost(target.uri);
       output.appendLine(
         `Opening target: scheme=${target.uri.scheme}, authority=${target.uri.authority || '(none)'}, path=${target.folderPath}`,
       );
@@ -248,5 +263,5 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 export function deactivate(): void {
-  // Nothing to clean up.
+  // Nothing to clean up
 }
