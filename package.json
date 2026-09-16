@@ -1,0 +1,76 @@
+{
+  "name": "external-terminal-here",
+  "displayName": "External Terminal Here",
+  "description": "Open a macOS Terminal in the current VS Code folder, including remote workspaces.",
+  "version": "1.0.0",
+  "publisher": "your-marketplace-publisher-id",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-account/vscode-external-terminal.git"
+  },
+  "keywords": [
+    "macos",
+    "terminal",
+    "iterm",
+    "ssh",
+    "remote-ssh"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "externalTerminalHere.open",
+        "title": "External Terminal: Open Here"
+      },
+      {
+        "command": "externalTerminalHere.showLogs",
+        "title": "External Terminal: Show Logs"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "externalTerminalHere.open",
+        "key": "cmd+alt+`",
+        "when": "editorTextFocus || explorerViewletVisible"
+      }
+    ],
+    "configuration": {
+      "title": "External Terminal Here",
+      "properties": {
+        "externalTerminalHere.app": {
+          "type": "string",
+          "enum": [
+            "terminal",
+            "iterm"
+          ],
+          "default": "terminal",
+          "description": "The macOS terminal application to open."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "npm run compile && vsce package --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.3",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.0.0"
+  }
+}
