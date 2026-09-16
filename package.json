@@ -41,10 +41,10 @@
       }
     ],
     "keybindings": [
-        {
-          "command": "remoteShellHere.open",
-          "key": "cmd+alt+`"
-        }
+      {
+        "command": "remoteShellHere.open",
+        "key": "cmd+alt+`"
+      }
     ],
     "configuration": {
       "title": "Remote Shell Here",
@@ -57,6 +57,11 @@
           ],
           "default": "terminal",
           "description": "The macOS terminal application to open."
+        },
+        "remoteShellHere.sshCommand": {
+          "type": "string",
+          "default": "exec \"${SHELL:-/bin/zsh}\" -l",
+          "description": "Command to run on the remote host."
         }
       }
     }

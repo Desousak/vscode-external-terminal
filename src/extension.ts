@@ -31,7 +31,7 @@ function shellQuote(value: string): string {
 }
 
 /**
- * Creates a command to launch a ssh session in a terminal
+ * Creates a command to launch an SSH session in a terminal
  * @param remoteHost The remote host to connect to
  * @param folderPath The folder path to navigate to on the remote host
  * @returns The command string to launch the SSH session
@@ -39,8 +39,7 @@ function shellQuote(value: string): string {
 function createRemoteLaunchCmd(remoteHost: string, folderPath: string): string {
   const remotePath =
     folderPath === '~' ? '"${HOME}"' : shellQuote(folderPath);
-  const remoteCommand =
-    `cd -- ${remotePath} && ` + `exec "\${SHELL:-/bin/zsh}" -l`;
+  const remoteCommand = `cd -- ${remotePath} && ${getSshCommand()}`;
   return `exec ssh -tt -o ClearAllForwardings=yes ${shellQuote(remoteHost)} ${shellQuote(remoteCommand)}`;
 }
 
@@ -51,6 +50,15 @@ function createRemoteLaunchCmd(remoteHost: string, folderPath: string): string {
 function getTermType(): 'terminal' | 'iterm' {
   const config = vscode.workspace.getConfiguration('remoteShellHere');
   return config.get('app', 'terminal');
+}
+
+/**
+ * Gets the command to run after connecting to a remote SSH host.
+ * @returns The remote command
+ */
+function getSshCommand(): string {
+  const config = vscode.workspace.getConfiguration('remoteShellHere');
+  return config.get('sshCommand', 'exec "${SHELL:-/bin/zsh}" -l');
 }
 
 /**
