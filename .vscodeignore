@@ -4,4 +4,3 @@ src
 tsconfig.json
 **/*.ts
 node_modules/@types
-out
