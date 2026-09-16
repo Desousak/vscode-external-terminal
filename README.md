@@ -1,6 +1,6 @@
-# External Terminal Here
+# Remote Terminal Here
 
-Open a macOS terminal in the current VS Code folder. Also supports opening and connecting to remote ssh workspaces. 
+Open a terminal in the current VS Code folder. Also supports opening and connecting to remote SSH workspaces.
 
 ## Requirements
 
@@ -9,11 +9,11 @@ Open a macOS terminal in the current VS Code folder. Also supports opening and c
 
 ## Usage
 
-Run **External Terminal: Open Here** from the Command Palette, or use `Cmd+Alt+\``.
+Run **Remote Terminal: Open Here** from the Command Palette, or use `Cmd+Alt+\``.
 
 ## Settings
 
-`externalTerminalHere.app` selects the terminal application:
+`remoteTerminalHere.app` selects the terminal application:
 
 - `terminal` (default)
 - `iterm`

@@ -1,5 +1,5 @@
 {
-  "name": "external-terminal-here",
+  "name": "remote-terminal-here",
   "displayName": "Remote Terminal Here",
   "description": "Open a terminal in the current VS Code folder, including remote workspaces.",
   "version": "1.0.0",
@@ -32,25 +32,25 @@
   "contributes": {
     "commands": [
       {
-        "command": "externalTerminalHere.open",
-        "title": "External Terminal: Open Here"
+        "command": "remoteTerminalHere.open",
+        "title": "Remote Terminal: Open Here"
       },
       {
-        "command": "externalTerminalHere.showLogs",
-        "title": "External Terminal: Show Logs"
+        "command": "remoteTerminalHere.showLogs",
+        "title": "Remote Terminal: Show Logs"
       }
     ],
     "keybindings": [
       {
-        "command": "externalTerminalHere.open",
+        "command": "remoteTerminalHere.open",
         "key": "cmd+alt+`",
         "when": "editorTextFocus || explorerViewletVisible"
       }
     ],
     "configuration": {
-      "title": "External Terminal Here",
+      "title": "Remote Terminal Here",
       "properties": {
-        "externalTerminalHere.app": {
+        "remoteTerminalHere.app": {
           "type": "string",
           "enum": [
             "terminal",
