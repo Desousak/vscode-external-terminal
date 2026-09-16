@@ -1,4 +1,4 @@
-# Remote Terminal Here
+# Remote Shell Here
 
 Open a terminal in the current VS Code folder. Also supports opening and connecting to remote SSH workspaces.
 
@@ -9,11 +9,11 @@ Open a terminal in the current VS Code folder. Also supports opening and connect
 
 ## Usage
 
-Run **Remote Terminal: Open Here** from the Command Palette, or use `Cmd+Alt+\``.
+Run **Remote Shell: Open Here** from the Command Palette, or use `Cmd+Alt+\``.
 
 ## Settings
 
-`remoteTerminalHere.app` selects the terminal application:
+`remoteShellHere.app` selects the terminal application:
 
 - `terminal` (default)
 - `iterm`

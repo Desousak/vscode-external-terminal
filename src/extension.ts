@@ -46,7 +46,7 @@ function createRemoteLaunchCmd(remoteHost: string, folderPath: string): string {
  * @returns The terminal type, either 'terminal' or 'iterm'
  */
 function getTermType(): 'terminal' | 'iterm' {
-  const config = vscode.workspace.getConfiguration('remoteTerminalHere');
+  const config = vscode.workspace.getConfiguration('remoteShellHere');
   return config.get('app', 'terminal');
 }
 
@@ -181,16 +181,16 @@ function getTarget(): { uri: vscode.Uri; folderPath: string } | void {
 
 export function activate(context: vscode.ExtensionContext): void {
   // Actual console output
-  const output = vscode.window.createOutputChannel('Remote Terminal Here');
+  const output = vscode.window.createOutputChannel('Remote Shell Here');
   // Command that shows the output logs
   const showLogs = vscode.commands.registerCommand(
-    'remoteTerminalHere.showLogs',
+    'remoteShellHere.showLogs',
     () => output.show(),
   );
 
   // Main command itself
   const disposable = vscode.commands.registerCommand(
-    'remoteTerminalHere.open',
+    'remoteShellHere.open',
     async () => {
       // Get the target folder and its path
       const target = getTarget();
@@ -199,7 +199,7 @@ export function activate(context: vscode.ExtensionContext): void {
           'No valid target found for opening the external terminal.',
         );
         void vscode.window.showErrorMessage(
-          'Remote Terminal Here: Open a folder or workspace first.',
+          'Remote Shell Here: Open a folder or workspace first.',
         );
         return;
       }
@@ -229,7 +229,7 @@ export function activate(context: vscode.ExtensionContext): void {
           return;
         } else {
           vscode.window.showErrorMessage(
-            'Remote Terminal Here: Unsupported URI scheme for opening an external terminal.',
+            'Remote Shell Here: Unsupported URI scheme for opening an external terminal.',
           );
         }
       } catch (error) {
