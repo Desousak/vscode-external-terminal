@@ -3,11 +3,11 @@
   "displayName": "External Terminal Here",
   "description": "Open a macOS Terminal in the current VS Code folder, including remote workspaces.",
   "version": "1.0.0",
-  "publisher": "your-marketplace-publisher-id",
+  "publisher": "Desousak",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-account/vscode-external-terminal.git"
+    "url": "https://github.com/Desousak/vscode-external-terminal.git"
   },
   "keywords": [
     "macos",
