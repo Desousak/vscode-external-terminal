@@ -1,7 +1,7 @@
 {
   "name": "external-terminal-here",
-  "displayName": "External Terminal Here",
-  "description": "Open a macOS Terminal in the current VS Code folder, including remote workspaces.",
+  "displayName": "Remote Terminal Here",
+  "description": "Open a terminal in the current VS Code folder, including remote workspaces.",
   "version": "1.0.0",
   "publisher": "Desousak",
   "license": "MIT",
